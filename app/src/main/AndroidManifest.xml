@@ -16,6 +16,9 @@
         <activity android:name=".RecognizeGallery"></activity>
         <activity android:name=".RecognizeCamera" />
         <activity android:name=".MainActivity">
+            <meta-data
+                android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+                android:value="ocr" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
