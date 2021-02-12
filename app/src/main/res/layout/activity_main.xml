@@ -13,12 +13,21 @@
         android:background="#D87F7F">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="0dp"
-            app:title="               Recognize Text ML Kit"
-            app:titleTextColor="@color/white" />
+            android:elevation="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recognize Text ML Kit"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
     </com.google.android.material.appbar.AppBarLayout>
 
 
@@ -26,7 +35,6 @@
         android:id="@+id/floatingActionButtonCamera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:onClick="doProcessCamera"
         app:backgroundTint="#FFD87F7F"
         app:tint="#FFFFFF"
@@ -39,11 +47,9 @@
         app:srcCompat="@drawable/ic_baseline_camera_alt_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonGallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="doProcessGallery"
-        android:clickable="true"
         android:layout_above="@+id/floatingActionButtonCamera"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
