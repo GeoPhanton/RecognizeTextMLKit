@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == Gallery_Intent) {
             imageUri = data.getData();
             Toast.makeText(this, "Imagen", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, RecognizeGallery.class);
+            intent.putExtra("imageUri", imageUri.toString());
+            startActivity(intent);
         }
     }
 }
