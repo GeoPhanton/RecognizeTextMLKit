@@ -8,7 +8,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +37,7 @@ public class RecognizeGallery extends AppCompatActivity {
 
         imageView = findViewById(R.id.ivphoto);
         textView = findViewById(R.id.txtdisplay);
-
+        textView.setMovementMethod(new ScrollingMovementMethod());
         bundle = getIntent().getExtras();
         captureImage();
     }
@@ -82,7 +84,7 @@ public class RecognizeGallery extends AppCompatActivity {
                             @Override
                             public void onSuccess(Text visionText) {
                                 processTextBlock(visionText);
-                                Toast.makeText(getApplicationContext(), "Si funciono :D", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Texto detectado", Toast.LENGTH_LONG).show();
                             }
                         })
                         .addOnFailureListener(
@@ -118,5 +120,13 @@ public class RecognizeGallery extends AppCompatActivity {
         } else {
             textView.setText(resultText);
         }
+    }
+
+    public void pressback(View view) {
+        finish();
+    }
+
+    public void refreshpress(View view) {
+        captureImage();
     }
 }

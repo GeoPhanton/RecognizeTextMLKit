@@ -25,7 +25,9 @@
                 android:scaleX="1.5"
                 android:scaleY="1.5"
                 android:background="#D87F7F"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+                android:onClick="pressback"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,6 +44,7 @@
                 android:src="@drawable/ic_baseline_refresh_24"
                 android:title="Refrescar"
                 android:background="#D87F7F"
+                android:onClick="refreshpress"
 
             android:layout_gravity="right"
                 android:layout_margin="10dp"
@@ -59,15 +62,20 @@
         android:layout_width="match_parent"
         android:layout_height="512dp"
         android:layout_below="@+id/app_bar" />
+
     <TextView
         android:id="@+id/txtdisplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ivphoto"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/ivphoto"
-        android:textSize="32dp"
-        android:textStyle="bold"
+        android:layout_marginStart="-4dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="3dp"
+        android:scrollbars="vertical"
+        android:text="Texto detectado"
         android:textAlignment="center"
-        android:text="Texto detectado" />
+        android:textSize="32dp"
+        android:textStyle="bold" />
 </RelativeLayout>
