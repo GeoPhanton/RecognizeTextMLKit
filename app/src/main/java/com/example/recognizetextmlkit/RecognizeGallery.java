@@ -4,24 +4,30 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.android.gms.tasks.OnFailureListener;
-//import com.google.android.gms.tasks.OnSuccessListener;
-//import com.google.android.gms.tasks.Task;
-//import com.google.firebase.ml.vision.FirebaseVision;
-//import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-//import com.google.firebase.ml.vision.text.FirebaseVisionText;
-//import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-//import com.google.mlkit.vision.common.InputImage;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+
+import java.io.IOException;
 
 public class RecognizeGallery extends AppCompatActivity {
-    ImageView imageView;
-    TextView textView;
+    private ImageView imageView;
+    private TextView textView;
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,31 +36,87 @@ public class RecognizeGallery extends AppCompatActivity {
         imageView = findViewById(R.id.ivphoto);
         textView = findViewById(R.id.txtdisplay);
 
-        Bundle bundle = getIntent().getExtras();
-        if(bundle.getString("imageUri") != null){
+        bundle = getIntent().getExtras();
+        captureImage();
+    }
+
+    private void captureImage() {
+        if (bundle.getString("imageUri") != null) {
             Uri myUri = Uri.parse(bundle.getString("imageUri"));
             imageView.setImageURI(myUri);
+
+            recognizeText(convertUri(myUri));
         } else {
-            imageView.setImageBitmap((Bitmap) bundle.get("imageBitmap"));
+            Bitmap myBitmap = (Bitmap) bundle.get("imageBitmap");
+            imageView.setImageBitmap(myBitmap);
+
+            recognizeText(convertBitmap(myBitmap));
         }
-        //imageView.buildDrawingCache();
-        //Bitmap bitmap = imageView.getDrawingCache();
-        //InputImage image = InputImage.fromBitmap(bitmap,0);
-        //FirebaseVision firebaseVision = FirebaseVision.getInstance();
-        //FirebaseVisionTextRecognizer firebaseVisionTextRecognizer = firebaseVision.getOnDeviceTextRecognizer();
-        //Task<FirebaseVisionText> task = firebaseVisionTextRecognizer.processImage(firebaseVisionImage);
-        //task.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-        //    @Override
-        //    public void onSuccess(FirebaseVisionText firebaseVisionText) {
-        //        String s = firebaseVisionText.getText();
-        //        textView.setText(s);
-        //    }
-        // });
-        //task.addOnFailureListener(new OnFailureListener() {
-        //    @Override
-        //   public void onFailure(@NonNull Exception e) {
-        //       Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-        //   }
-        //});
+    }
+
+    private InputImage convertUri(Uri uri) {
+        InputImage image = null;
+        try {
+            image = InputImage.fromFilePath(this, uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    private InputImage convertBitmap(Bitmap bitmap) {
+        int rotationDegree = 0;
+        InputImage image = InputImage.fromBitmap(bitmap, rotationDegree);
+        return image;
+    }
+
+    private void recognizeText(InputImage image) {
+        if (image == null) {
+            return;
+        }
+        TextRecognizer recognizer = TextRecognition.getClient();
+
+        Task<Text> result =
+                recognizer.process(image)
+                        .addOnSuccessListener(new OnSuccessListener<Text>() {
+                            @Override
+                            public void onSuccess(Text visionText) {
+                                processTextBlock(visionText);
+                                Toast.makeText(getApplicationContext(), "Si funciono :D", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        textView.setText("No hay texto");
+                                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+    }
+
+    private void processTextBlock(Text result) {
+        String resultText = result.getText();
+        for (Text.TextBlock block : result.getTextBlocks()) {
+            String blockText = block.getText();
+            Point[] blockCornerPoints = block.getCornerPoints();
+            Rect blockFrame = block.getBoundingBox();
+            for (Text.Line line : block.getLines()) {
+                String lineText = line.getText();
+                Point[] lineCornerPoints = line.getCornerPoints();
+                Rect lineFrame = line.getBoundingBox();
+                for (Text.Element element : line.getElements()) {
+                    String elementText = element.getText();
+                    Point[] elementCornerPoints = element.getCornerPoints();
+                    Rect elementFrame = element.getBoundingBox();
+                }
+            }
+        }
+
+        if (resultText.equals("")) {
+            textView.setText("No hay texto");
+        } else {
+            textView.setText(resultText);
+        }
     }
 }
